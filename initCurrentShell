@@ -1,0 +1,15 @@
+#!/bin/sh
+
+# 循环给当前文件夹下的文件设置为可执行
+for file in ./*; do
+  if [ -f "$file" ]; then
+    # 排除 .md 文件
+    if [[ "$file" != *.md ]]; then
+      echo "$file"
+      chmod +x "$file"
+    fi
+  fi
+done
+
+# 初始化完成提示信息
+echo "初始化完成！可以去使用脚本了"

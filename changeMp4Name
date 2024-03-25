@@ -1,0 +1,52 @@
+#!/usr/bin/env node
+
+const fs = require("fs");
+const path = require("path");
+
+const oldString = process.argv[2];
+const newString = process.argv[3] || "";
+
+console.log(oldString, newString);
+
+// 检查参数
+if (!oldString) {
+  console.log("请提供旧字符串和新字符串作为参数");
+  process.exit(1);
+}
+
+fs.readdirSync(".").forEach((file) => {
+  if (path.extname(file) === ".mp4") {
+    console.log(file);
+  }
+});
+
+// 询问用户是否继续
+const readline = require("readline").createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+
+readline.question("是否继续？yes/no:", (answer) => {
+  if (answer === "yes") {
+    console.log("继续");
+    changeMp4Name(oldString, newString);
+  } else {
+    console.log("退出");
+  }
+  readline.close();
+});
+
+function changeMp4Name(oldString, newString) {
+  // 获取当前目录下所有的文件
+  fs.readdirSync(".").forEach((file) => {
+    // 检查文件扩展名是否为 .mp4
+    if (path.extname(file) === ".mp4") {
+      // 检查文件名是否包含 oldString
+      if (file.includes(oldString)) {
+        // 将 oldString 替换为 newString，并重命名文件
+        const newFile = file.replace(oldString, newString);
+        fs.renameSync(file, newFile);
+      }
+    }
+  });
+}

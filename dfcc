@@ -1,0 +1,15 @@
+#!/bin/sh
+
+if [ ! -n "$1" ]; then
+  echo "未传入分支名"
+  exit 1
+fi
+
+duoji foreach git checkout .
+duoji foreach git clean -df
+
+echo "\033[32m是否切换到 $1 分支？enter继续\033[0m"
+read -r
+
+duoji foreach git pull origin $1
+duoji foreach git checkout $1

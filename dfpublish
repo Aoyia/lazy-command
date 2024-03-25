@@ -1,0 +1,58 @@
+#!/bin/bash
+
+# 设置当任何命令执行失败时退出脚本
+set -e
+# 设置当脚本退出时打印异常信息
+trap 'echo "出现异常：$?"' EXIT
+
+# 清空原来的日志文件
+>/Users/neoyuan/bin/log.log
+
+# 定义一个函数来转换版本字符串
+convertVersionString() {
+  local version=${1/papaas-/v} # 将 papaas- 替换为 v
+  version=${version//./-}      # 将所有的 . 替换为 -
+  echo $version                # 返回转换后的版本字符串
+}
+
+# 定义一个函数来执行发布命令
+publishCommand() {
+  local branchName=$1                               # 获取第一个参数作为分支名
+  local versionName=$2                              # 获取第二个参数作为版本名
+  local tagName=$(convertVersionString $branchName) # 调用函数转换版本字符串
+
+  # 执行模板中的命令，并且将输出日志保存到 /Users/neoyuan/bin/log.log 文件中
+  git pull origin $branchName 2>&1 | tee -a /Users/neoyuan/bin/log.log || exit 1
+  npm run lib 2>&1 | tee -a /Users/neoyuan/bin/log.log || exit 1
+  git add . 2>&1 | tee -a /Users/neoyuan/bin/log.log || exit 1
+  git commit -m "$versionName" --no-verify 2>&1 | tee -a /Users/neoyuan/bin/log.log || exit 1
+  nrm use drc 2>&1 | tee -a /Users/neoyuan/bin/log.log || exit 1
+  nrm ls 2>&1 | tee -a /Users/neoyuan/bin/log.log || exit 1
+  npm publish --tag $tagName 2>&1 | tee -a /Users/neoyuan/bin/log.log || exit 1
+  git push --set-upstream origin $branchName 2>&1 | tee -a /Users/neoyuan/bin/log.log || exit 1
+  nrm use dget 2>&1 | tee -a /Users/neoyuan/bin/log.log || exit 1
+}
+
+# 参数校验
+if [ -z "$1" ]; then
+  echo "Branch name parameter required."
+  exit 1
+fi
+
+# 参数校验
+if [ -z "$2" ]; then
+  echo "version parameter required."
+  exit 1
+fi
+
+# 使用传递给脚本的两个参数作为 branchName 和 versionName 变量的值
+branchName=$1
+versionName=$2
+
+# 调用函数执行发布命令
+publishCommand $branchName $versionName
+
+echo '日志地址：/Users/neoyuan/bin/log.log'
+
+# 等待用户输入一个字符，阻止脚本立马退出
+# read -n1 -r -p "按任意键继续..." key

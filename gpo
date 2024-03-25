@@ -1,0 +1,16 @@
+#!/bin/sh
+
+# 获取当前仓库的分支
+# 使用git symbolic-ref命令获取当前分支的名称，并将结果赋值给变量branchName
+branchName=$(git symbolic-ref --short -q HEAD)
+
+# 打印当前分支的名称
+echo 当前分支：$branchName
+
+# 询问是否继续
+# 使用read命令提示用户是否继续执行，并等待用户按下回车键
+read -p "是否继续执行, 按enter键将推送分支到远程..."
+
+# 推送分支到远程仓库
+# 使用git push命令将当前分支推送到名为origin的远程仓库
+git push origin $branchName
