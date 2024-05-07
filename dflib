@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/bin/bash
+
 # 主逻辑
 main() {
   # 获取当前目录
@@ -6,107 +7,79 @@ main() {
   # 打印当前目录
   echo "当前目录：$currentPath"
   currentDirName=${currentPath##*/}
+
   # 判断当前文件路径的最后一个目录名是否是 X-APAAS-WORKSPACE
   if [ "$currentDirName" != "X-APAAS-WORKSPACE" ]; then
     echo "当前文件目录不是 X-APAAS-WORKSPACE"
     exit 1
   fi
-  # 判断是否传入了依赖项目名
-  if [ ! -n "$1" ]; then
+
+  # 验证参数输入
+  if [ -z "$1" ]; then
     echo "未传入依赖项目名"
     exit 1
   fi
-  # 判断是否传入了主项目名
-  if [ ! -n "$2" ]; then
+
+  if [ -z "$2" ]; then
     echo "未传入主项目名"
     exit 1
   fi
-  # 判断依赖项目名 是否包含在 X-APAAS-WORKSPACE 目录下的 DEPS 目录中所有的项目名中
-  # 获取 DEPS 目录下的所有项目名
+
+  # 验证依赖项目名
   deps=$(ls ./DEPS)
+  dep=$(echo "$deps" | grep "$1")
 
-  # 判断传入的依赖项目名是否包含在所有的项目名中，模糊查询
-  found=false
-
-  for dep in $deps; do
-    if [[ $dep == *"$1"* ]]; then
-      found=true
-      break
-    fi
-  done
-
-  # 判断是否匹配的依赖项目名
-  if $found; then
-    echo "匹配的依赖项目名：$dep"
-  else
+  if [ -z "$dep" ]; then
     echo "未找到匹配的依赖项目名,请检查"
     exit 1
   fi
 
-  # 类似的逻辑，对第二个参数进行判断，第二个参数对应的目录MAIN
-  # 判断主项目名 是否包含在 X-APAAS-WORKSPACE 目录下的 MAIN 目录中所有的项目名中
-  # 获取 MAIN 目录下的所有项目名
+  echo "匹配的依赖项目名：$dep"
+
+  # 验证主项目名
   mains=$(ls ./MAIN)
+  main=$(echo "$mains" | grep "$2")
 
-  # 判断传入的主项目名是否包含在所有的项目名中，模糊查询
-  found=false
-
-  for main in $mains; do
-    if [[ $main == *"$2"* ]]; then
-      found=true
-      break
-    fi
-  done
-
-  # 判断是否匹配的主项目名
-  if $found; then
-    echo "匹配的主项目名：$main"
-  else
+  if [ -z "$main" ]; then
     echo "未找到匹配的主项目名,请检查"
     exit 1
   fi
 
-  # 如果 $dep 为 x-apaas-frontend-i18n,则走一下移动文件夹的逻辑
-  if [ "$dep" == "x-apaas-frontend-i18n" ]; then
-    # 移动文件夹
-    pwd
-    rm -rf ./MAIN/$main/node_modules/@x-apaas/$dep
-    cp -rf ./DEPS/$dep ./MAIN/$main/node_modules/@x-apaas/
+  echo "匹配的主项目名：$main"
 
-    # 提醒用户，那个依赖项目的依赖包已经拷贝到那个主项目的 node_modules 目录下，凸显颜色输出
+  # 处理特殊依赖项目名
+  if [ "$dep" == "x-apaas-frontend-i18n" ]; then
+    rm -rf "./MAIN/$main/node_modules/@x-apaas/$dep"
+    cp -rf "./DEPS/$dep" "./MAIN/$main/node_modules/@x-apaas/"
     echo -e "\033[32m依赖项目 $dep 的依赖包已经拷贝到主项目 $main 的 node_modules 目录下 \033[0m"
-    exit 1
+    exit 0
   fi
 
   # 进入依赖项目目录
-  cd ./DEPS/$dep
+  cd "./DEPS/$dep"
+
   # 执行依赖项目的打包命令
-  # 询问是否执行打包，要求键盘按下 enter 键，才能继续执行
   read -p "按下 enter 键继续执行..."
 
-  # $3 为可选参数，如果是 y 则执行打包命令，否则不执行
   if [ "$3" != "n" ]; then
     npm run lib
   else
     echo "正在移动lib文件夹到主项目"
   fi
 
-  # 将当前依赖包打包后的文件拷贝到主项目的 node_modules 目录下
-  # ls ../../MAIN/$main/node_modules/@x-apaas/$dep/
-  # 移除目标目录下的 lib 文件夹
-  rm -rf ../../MAIN/$main/node_modules/@x-apaas/$dep/lib
+  # 将依赖项目打包后的文件拷贝到主项目
+  rm -rf "../../MAIN/$main/node_modules/@x-apaas/$dep/lib"
+
   if [ "$dep" == "x-dcloud-ui" ]; then
-    cp -rf lib ../../MAIN/$main/node_modules/@x-ui/$dep/
+    cp -rf lib "../../MAIN/$main/node_modules/@x-ui/$dep/"
   else
-    cp -rf lib ../../MAIN/$main/node_modules/@x-apaas/$dep/
+    cp -rf lib "../../MAIN/$main/node_modules/@x-apaas/$dep/"
   fi
+
   # 返回 X-APAAS-WORKSPACE 目录
   cd ../../
-  # 提醒用户，那个依赖项目的依赖包已经拷贝到那个主项目的 node_modules 目录下，凸显颜色输出
   echo -e "\033[32m依赖项目 $dep 的依赖包已经拷贝到主项目 $main 的 node_modules 目录下 \033[0m"
 }
 
 # 执行主逻辑
 main "$1" "$2" "$3"
-
-# 接收两个参数 一个是 依赖项目名，一个是 主项目名
