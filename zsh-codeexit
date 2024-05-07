@@ -1,0 +1,6 @@
+#!/bin/sh
+
+codeexit() {
+  code "$1" && exit
+}
+alias codee='codeexit'
