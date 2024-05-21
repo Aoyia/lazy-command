@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# 监听的文件路径
+FILE_TO_WATCH="/Users/neoyuan/Documents/define/apaas-playwright/tests/excel.main.spec.ts"
+# 变化时执行的脚本路径
+SCRIPT_TO_RUN="/Users/neoyuan/bin/script_to_run.sh"
+
+# 检查文件是否存在
+if [ ! -f "$FILE_TO_WATCH" ]; then
+  echo "文件 $FILE_TO_WATCH 不存在."
+  exit 1
+fi
+
+# 使用fswatch监听文件变化
+fswatch -o "$FILE_TO_WATCH" | while read -r event; do
+  echo "检测到文件变化，事件号: $event"
+  echo "执行脚本: $SCRIPT_TO_RUN"
+  bash "$SCRIPT_TO_RUN"
+done

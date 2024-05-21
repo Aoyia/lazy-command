@@ -1,6 +1,20 @@
 #!/bin/sh
 
+# 定义一个函数来打开VS Code并在打开后退出
 codeexit() {
-  code "$1" && exit
+  # 使用code打开指定文件或目录
+  if code "$1"; then
+    echo "VS Code 已成功打开 $1"
+    exit 0
+  else
+    echo "无法打开 $1" >&2
+    exit 1
+  fi
 }
-alias codee='codeexit'
+
+# 判断是否处于交互式shell中，并设置别名
+if [ -n "$PS1" ]; then
+  alias codee='codeexit'
+else
+  echo "codee 别名在非交互式shell中不可用。" >&2
+fi

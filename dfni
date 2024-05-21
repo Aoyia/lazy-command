@@ -64,9 +64,6 @@ done
 npm uninstall @x-ui/x-dcloud-ui
 npm install --save --save-exact @x-ui/x-dcloud-ui || exit 1
 
-# 确保缓存有效
-npm config set cache-min 9999999
-
 # 安装其他依赖项并使用缓存
 npm install || exit 1
 

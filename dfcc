@@ -1,15 +1,19 @@
 #!/bin/sh
 
-if [ ! -n "$1" ]; then
+# 检查是否传入分支名
+if [ -z "$1" ]; then
   echo "未传入分支名"
   exit 1
 fi
 
+# 清除未提交的更改
 duoji foreach git checkout .
 duoji foreach git clean -df
 
-echo "\033[32m是否切换到 $1 分支？enter继续\033[0m"
+# 确认切换分支
+echo "\033[32m是否切换到 $1 分支？按回车键继续，Ctrl-C取消。\033[0m"
 read -r
 
-duoji foreach git pull origin $1
-duoji foreach git checkout $1
+# 拉取最新代码并切换到指定分支
+duoji foreach git pull origin "$1"
+duoji foreach git checkout "$1"

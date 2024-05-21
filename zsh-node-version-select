@@ -1,8 +1,18 @@
 #!/bin/sh
 
-if [[ $PWD == *'define'* ]]; then
-  fnm use 14
-  echo -e '\033[32mNode 版本已切换到 14\033[0m'
+# 根据当前目录是否包含 'apaas-playwright' 来切换Node版本
+if echo "$PWD" | grep -q 'apaas-playwright'; then
+  # 尝试切换到Node版本16
+  NODE_VERSION=16
+elif echo "$PWD" | grep -q 'define'; then
+  # 尝试切换到Node版本14
+  NODE_VERSION=14
 else
-  fnm use 18
+  # 尝试切换到Node版本18
+  NODE_VERSION=18
 fi
+
+fnm use $NODE_VERSION || {
+  echo "切换到Node版本 $NODE_VERSION 失败。"
+  exit 1
+}

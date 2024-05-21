@@ -49,9 +49,12 @@ main() {
 
   # 处理特殊依赖项目名
   if [ "$dep" == "x-apaas-frontend-i18n" ]; then
-    rm -rf "./MAIN/$main/node_modules/@x-apaas/$dep"
-    cp -rf "./DEPS/$dep" "./MAIN/$main/node_modules/@x-apaas/"
-    echo -e "\033[32m依赖项目 $dep 的依赖包已经拷贝到主项目 $main 的 node_modules 目录下 \033[0m"
+    cd "./DEPS/$dep"
+    npm run lib
+    cd -
+    rm -rf "./MAIN/$main/public/i18n/*"
+    cp -rf "./DEPS/$dep/dist/" "./MAIN/$main/public/i18n/"
+    echo -e "\033[32m依赖项目 $dep 的依赖包已经拷贝到主项目 $main 的 public/i18n 目录下 \033[0m"
     exit 0
   fi
 
