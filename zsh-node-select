@@ -1,0 +1,38 @@
+#!/bin/sh
+
+# 获取当前路径
+current_path="$PWD"
+
+node_16_folders=('apaas-playwright')
+
+# 定义需要使用 Node.js 14 的文件夹数组
+node_14_folders=('define' 'company-project')
+
+# 定义需要使用 Node.js 18 的文件夹数组
+node_18_folders=('github-project' 'another-folder-using-node-18')
+
+# 定义一个函数来检查路径是否包含在数组中
+contains_folder() {
+  local folder_array=("$@")
+  for folder in "${folder_array[@]}"; do
+    if echo "$current_path" | grep -q "$folder"; then
+      return 0
+    fi
+  done
+  return 1
+}
+
+# 匹配 Node.js 16 的文件夹，切换后直接退出
+if contains_folder "${node_16_folders[@]}"; then
+  fnm use 16
+  exit 0
+fi
+
+# 检查并切换 Node.js 版本
+if contains_folder "${node_14_folders[@]}"; then
+  fnm use 14
+elif contains_folder "${node_18_folders[@]}"; then
+  fnm use 18
+else
+  fnm use 18
+fi
