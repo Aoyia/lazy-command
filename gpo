@@ -1,16 +1,28 @@
 #!/bin/sh
 
+# 定义一个包含特定分支名称的数组
+specialBranches=("papaas-3.2.20-lts" "release/papaas-4.0.8-rc" "release/papaas-4.1.1-rc")
+
 # 获取当前仓库的分支
-# 使用git symbolic-ref命令获取当前分支的名称，并将结果赋值给变量branchName
 branchName=$(git symbolic-ref --short -q HEAD)
 
 # 打印当前分支的名称
-echo 当前分支：$branchName
+echo "当前分支：$branchName"
 
-# 询问是否继续
-# 使用read命令提示用户是否继续执行，并等待用户按下回车键
-read -p "是否继续执行, 按enter键将推送分支到远程..."
+# 检查当前分支是否在特定分支数组中
+if printf '%s\n' "${specialBranches[@]}" | grep -qx "$branchName"; then
+  # 询问是否继续
+  read -p "您正在推送到 $branchName 分支，是否继续? (yes/no): " confirm
+
+  # 根据用户输入决定是否继续
+  if [ "$confirm" != "yes" ]; then
+    echo "推送已取消"
+    exit 0
+  fi
+else
+  # 询问是否继续
+  read -p "是否继续执行, 按enter键将推送分支到远程..."
+fi
 
 # 推送分支到远程仓库
-# 使用git push命令将当前分支推送到名为origin的远程仓库
 git push origin $branchName
