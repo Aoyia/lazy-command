@@ -1,0 +1,47 @@
+#!/bin/bash
+
+# 定义基准分支
+base_branch_lts="papaas-3.2.20-lts"
+base_branch_408="release/papaas-4.0.8-rc" # 保留 'release/' 前缀
+
+# 获取今日分支名的函数
+get_today_branch() {
+  local base_branch
+  local suffix=${2:-1} # 默认为 1，如果未提供参数则使用 1
+  if [[ $1 == "lts" ]]; then
+    base_branch=$base_branch_lts
+  elif [[ $1 == "408" ]]; then
+    base_branch=$base_branch_408
+  else
+    echo -e "\033[31m错误：未指定有效的版本类型。请使用 'lts' 或 '408'。\033[0m"
+    exit 1
+  fi
+  local today=$(date +%Y%m%d)
+  # 检查 base_branch 是否已包含 'release/' 前缀
+  if [[ $base_branch =~ ^release/ ]]; then
+    local today_branch="${base_branch}-${today}.${suffix}"
+  else
+    local today_branch="release/${base_branch}-${today}.${suffix}"
+  fi
+  echo $today_branch
+}
+
+# 检查是否提供了版本类型参数
+if [ -z "$1" ]; then
+  echo -e "\033[31m错误：未提供版本类型参数。请使用 'lts' 或 '408'。\033[0m"
+  exit 1
+fi
+
+# 调用函数并打印今日分支名称
+today_branch=$(get_today_branch $1 $2)
+echo -e "要创建的分支：\n\033[32m$today_branch\033[0m"
+
+# 提示用户确认
+echo "按 Enter 继续..."
+read
+
+if [[ $1 == "lts" ]]; then
+  dj create-remote-branch $base_branch_lts $today_branch
+elif [[ $1 == "408" ]]; then
+  dj create-remote-branch $base_branch_408 $today_branch
+fi

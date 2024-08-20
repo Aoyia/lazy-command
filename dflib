@@ -70,13 +70,22 @@ main() {
     echo "正在移动lib文件夹到主项目"
   fi
 
-  # 将依赖项目打包后的文件拷贝到主项目
-  rm -rf "../../MAIN/$main/node_modules/@x-apaas/$dep/lib"
-
-  if [ "$dep" == "x-dcloud-ui" ]; then
-    cp -rf lib "../../MAIN/$main/node_modules/@x-ui/$dep/"
+  # 检查并移动 dist 文件夹，如果不存在则移动 lib 文件夹
+  if [ -d "dist" ]; then
+    src_folder="dist"
   else
-    cp -rf lib "../../MAIN/$main/node_modules/@x-apaas/$dep/"
+    src_folder="lib"
+  fi
+
+  # 删除目标目录中的旧文件
+  rm -rf "../../MAIN/$main/node_modules/@x-apaas/$dep/lib"
+  rm -rf "../../MAIN/$main/node_modules/@x-apaas/$dep/dist"
+
+  # 根据依赖名称选择目标目录
+  if [ "$dep" == "x-dcloud-ui" ]; then
+    cp -rf $src_folder "../../MAIN/$main/node_modules/@x-ui/$dep/"
+  else
+    cp -rf $src_folder "../../MAIN/$main/node_modules/@x-apaas/$dep/"
   fi
 
   # 返回 X-APAAS-WORKSPACE 目录

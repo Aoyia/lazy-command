@@ -6,16 +6,14 @@ if [ -z "$1" ]; then
   exit 1
 fi
 
+echo "\033[32m是否切换到 $1 分支？按回车键继续，Ctrl-C取消。\033[0m"
 # 清除未提交的更改
-duoji foreach git checkout .
 duoji foreach git clean -df
+duoji foreach git checkout .
 
 # 确认切换分支
-echo "\033[32m是否切换到 $1 分支？按回车键继续，Ctrl-C取消。\033[0m"
 read -r
 
 # 拉取最新代码并切换到指定分支
-duoji foreach git checkout alpha
-duoji foreach git branch -D "$1"
-duoji foreach git pull origin "$1"
 duoji foreach git checkout "$1"
+duoji foreach git pull origin "$1"

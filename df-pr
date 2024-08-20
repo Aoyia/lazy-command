@@ -1,0 +1,28 @@
+#!/bin/bash
+
+base_branch_lts="papaas-3.2.20-lts"
+base_branch_408="release/papaas-4.0.8-rc"
+
+if [ "$#" -ne 2 ]; then
+    echo -e "\033[31m错误：需要提供两个参数。\033[0m"
+    echo -e "用法: \033[33m$0 [lts|408] [today_branch]\033[0m"
+    exit 1
+fi
+
+today_branch=$2
+
+command=""
+
+if [[ $1 == "lts" ]]; then
+  command="dj create-pr $today_branch $base_branch_lts"
+elif [[ $1 == "408" ]]; then
+  command="dj create-pr $today_branch $base_branch_408"
+else
+  echo -e "\033[31m错误：未知的版本类型 '\033[33m$1\033[31m'。请使用 'lts' 或 '408'。\033[0m"
+  exit 1
+fi
+
+echo -e "要执行的命令：\033[32m$command\033[0m"
+read -p "按 Enter 继续..."
+
+eval $command
