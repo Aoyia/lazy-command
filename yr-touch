@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# 函数功能：自动创建文件，并且如果目录不存在则创建
+safe_touch() {
+    file_path="$1"
+
+    # 获取文件的目录路径
+    dir_path=$(dirname "$file_path")
+
+    # 如果目录不存在，则创建目录
+    if [ ! -d "$dir_path" ]; then
+        echo "目录 $dir_path 不存在，正在创建..."
+        mkdir -p "$dir_path"
+    fi
+
+    # 使用 touch 命令创建文件
+    touch "$file_path"
+    echo "文件 $file_path 已创建"
+}
+
+# 使用示例：可以将目标文件作为参数传递给脚本
+safe_touch "$1"

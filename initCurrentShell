@@ -6,7 +6,7 @@ for file in ./*; do
     # 排除 .md 文件
     if [[ "$file" != *.md ]]; then
       echo "$file"
-      chmod +x "$file"
+        "$file"
     fi
   fi
 done

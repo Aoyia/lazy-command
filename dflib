@@ -84,6 +84,8 @@ main() {
   # 根据依赖名称选择目标目录
   if [ "$dep" == "x-dcloud-ui" ]; then
     cp -rf $src_folder "../../MAIN/$main/node_modules/@x-ui/$dep/"
+  elif [ "$dep" == "xdap-lib-rule-engine" ]; then
+    cp -rf $src_folder "../../MAIN/$main/node_modules/@x-apaas/x-lib-rule-engine/"
   else
     cp -rf $src_folder "../../MAIN/$main/node_modules/@x-apaas/$dep/"
   fi

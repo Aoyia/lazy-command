@@ -18,3 +18,4 @@ if [ -n "$PS1" ]; then
 else
   echo "codee 别名在非交互式shell中不可用。" >&2
 fi
+
