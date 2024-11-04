@@ -1,7 +1,7 @@
 #!/bin/bash
 
 base_branch_lts="papaas-3.2.20-lts"
-base_branch_408="release/papaas-4.0.8-rc"
+base_branch_408="release/papaas-4.0.8"
 
 if [ "$#" -ne 2 ]; then
     echo -e "\033[31m错误：需要提供两个参数。\033[0m"

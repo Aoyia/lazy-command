@@ -2,7 +2,7 @@
 
 # 定义基准分支
 base_branch_lts="papaas-3.2.20-lts"
-base_branch_408="release/papaas-4.0.8-rc" # 保留 'release/' 前缀
+base_branch_408="release/papaas-4.0.8" # 保留 'release/' 前缀
 
 # 获取今日分支名的函数
 get_today_branch() {
@@ -37,6 +37,9 @@ today_branch=$(get_today_branch $1 $2)
 echo -e "要创建的分支：\n\033[32m$today_branch\033[0m"
 
 # 提示用户确认
+echo "将要进行："
+echo "1. 打出昨日分支tag"
+echo "2. 创建今日分支"
 echo "按 Enter 继续..."
 read
 

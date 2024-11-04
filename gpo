@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # 定义一个包含特定分支名称的数组
-specialBranches=("papaas-3.2.20-lts" "release/papaas-4.0.8-rc" "release/papaas-4.1.1-rc")
+specialBranches=("papaas-3.2.20-lts" "release/papaas-4.0.8" "release/papaas-4.1.1-rc")
 
 # 获取当前仓库的分支
 branchName=$(git symbolic-ref --short -q HEAD)
