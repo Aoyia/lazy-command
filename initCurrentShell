@@ -1,12 +1,13 @@
-#!/bin/sh
+# Generated Code
+#!/bin/bash
 
 # 循环给当前文件夹下的文件设置为可执行
 for file in ./*; do
   if [ -f "$file" ]; then
     # 排除 .md 文件
     if [[ "$file" != *.md ]]; then
-      echo "$file"
-        "$file"
+      echo "设置可执行权限: $file"
+      chmod +x "$file"
     fi
   fi
 done

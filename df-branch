@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# 询问是否打好tag
+echo "是否已经打好tag？"
+echo "按 Enter 继续..."
+read
+
 # 定义基准分支
 base_branch_lts="papaas-3.2.20-lts"
 base_branch_408="release/papaas-4.0.8" # 保留 'release/' 前缀

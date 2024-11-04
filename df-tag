@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# 参数1：版本类型，lts 或 408
+# 参数2：分支名
+
+# 获取第一个参数
+version_type="$1"
+# 获取第二个参数
+branch_name="$2"
+
+# 检查输入参数
+if [[ -z "$version_type" || -z "$branch_name" ]]; then
+  echo -e "\033[31m错误：请提供版本类型和分支名。\033[0m"
+  echo "用法：$0 <版本类型> <分支名>"
+  exit 1
+fi
+
+# 打印分支名
+echo -e "分支名：\n\033[32m$branch_name\033[0m"
+
+# 定义提取 tag 名称的函数
+extract_tag_name() {
+  local branch="$1"
+  echo "$branch" | sed -e 's#^release/##' -e 's#^papaas-##'
+}
+
+# 获取 tag 名称
+tag_name=$(extract_tag_name "$branch_name")
+echo -e "tag名：\n\033[32m$tag_name\033[0m"
+
+# 显示将要执行的命令
+echo "将要执行的命令：duoji release finish $tag_name -t $branch_name"
+
+# 提示用户确认
+echo "按下 Enter 继续执行，Ctrl+C 取消"
+read
+
+# 执行 duoji 命令
+duoji release finish "$tag_name" -t "$branch_name"
