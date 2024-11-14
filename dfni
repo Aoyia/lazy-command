@@ -69,6 +69,12 @@ if [ -z "$tag" ]; then
   tag=$(getVersion "$branchName")
 fi
 
+# 检查 -all 参数是否为 yes 或 no
+if [[ "$install_deps" != "y" && "$install_deps" != "n" ]]; then
+  echo -e "\033[31m错误：-all 参数只能是 'y' 或 'n'\033[0m"
+  exit 1
+fi
+
 echo -e "选定的版本号为: \033[32m$tag\033[0m"
 echo -e "是否执行 npm install: \033[33m$install_deps\033[0m"
 echo "按 Enter 键继续执行，或 Ctrl+C 取消"
@@ -116,5 +122,3 @@ if [ "$install_deps" = "yes" ]; then
 else
   echo -e "\033[33m已跳过全部依赖安装\033[0m"
 fi
-
-echo -e "\033[32m依赖安装成功\033[0m"
